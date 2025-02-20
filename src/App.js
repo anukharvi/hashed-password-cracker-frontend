@@ -10,7 +10,7 @@ function App() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:5000/crack", {
+            const response = await axios.post("https://hashed-password-cracker-backend.onrender.com", {
                 hash,
                 algorithm,
                 method,
