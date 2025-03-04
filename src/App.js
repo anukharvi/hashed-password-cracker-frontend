@@ -74,7 +74,7 @@ function App() {
                     {/* ✅ NEW: Show options after successful signup */}
                     {signupSuccess && (
                         <div>
-                            <p className="message">🎉 Signup successful! What do you want to do next?</p>
+                            <p className="message">🎉 Signup successful!</p>
                             <button onClick={() => setShowCracker(true)} className="btn">
                                 Go to Crack Password
                             </button>
