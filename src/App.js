@@ -23,6 +23,7 @@ function App() {
         try {
             const response = await axios.post(SIGNUP_URL, { username, password });
             setSignupMessage(response.data.message);
+            setTimeout(() => setShowCracker(true), 1000); // ✅ Redirect to Crack Page after Signup
         } catch (error) {
             setSignupMessage(error.response?.data?.error || "Signup failed");
         }
@@ -112,6 +113,13 @@ function App() {
                             )}
                         </div>
                     )}
+
+                    <hr className="divider" />
+
+                    {/* ✅ Back to Signup Button */}
+                    <button onClick={() => setShowCracker(false)} className="btn btn-secondary">
+                        Back to Signup
+                    </button>
                 </div>
             )}
         </div>
