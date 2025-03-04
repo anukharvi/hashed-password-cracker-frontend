@@ -7,6 +7,7 @@ function App() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [signupMessage, setSignupMessage] = useState("");
+    const [signupSuccess, setSignupSuccess] = useState(false); // ✅ NEW: To prevent auto-redirection
     const [hash, setHash] = useState("");
     const [algorithm, setAlgorithm] = useState("md5");
     const [method, setMethod] = useState("brute-force");
@@ -23,9 +24,10 @@ function App() {
         try {
             const response = await axios.post(SIGNUP_URL, { username, password });
             setSignupMessage(response.data.message);
-            setTimeout(() => setShowCracker(true), 1000); // ✅ Redirect to Crack Page after Signup
+            setSignupSuccess(true); // ✅ NEW: Show options instead of auto-redirecting
         } catch (error) {
             setSignupMessage(error.response?.data?.error || "Signup failed");
+            setSignupSuccess(false);
         }
     };
 
@@ -66,7 +68,18 @@ function App() {
                         />
                         <button type="submit" className="btn">Signup</button>
                     </form>
+
                     {signupMessage && <p className="message">{signupMessage}</p>}
+
+                    {/* ✅ NEW: Show options after successful signup */}
+                    {signupSuccess && (
+                        <div>
+                            <p className="message">🎉 Signup successful! What do you want to do next?</p>
+                            <button onClick={() => setShowCracker(true)} className="btn">
+                                Go to Crack Password
+                            </button>
+                        </div>
+                    )}
 
                     <hr className="divider" />
 
