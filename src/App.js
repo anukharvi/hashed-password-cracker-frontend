@@ -1,36 +1,21 @@
 import React, { useState } from "react";
 import axios from "axios";
+import "./styles.css"; // ✅ Import CSS for styling
 
 function App() {
+    const [showCracker, setShowCracker] = useState(false);
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [signupMessage, setSignupMessage] = useState("");
     const [hash, setHash] = useState("");
     const [algorithm, setAlgorithm] = useState("md5");
     const [method, setMethod] = useState("brute-force");
     const [result, setResult] = useState(null);
     const [error, setError] = useState("");
-    const [showSignup, setShowSignup] = useState(false); // ✅ Toggle between Signup & Cracker
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [signupMessage, setSignupMessage] = useState("");
 
-    // ✅ Backend API URLs
     const API_URL = "https://hashed-password-cracker-backend.onrender.com/crack";
     const SIGNUP_URL = "https://hashed-password-cracker-backend.onrender.com/signup";
 
-    // ✅ Handle Password Cracking
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError("");
-        setResult(null);
-
-        try {
-            const response = await axios.post(API_URL, { hash, algorithm, method });
-            setResult(response.data);
-        } catch (error) {
-            setError("Failed to connect to backend. Check console for details.");
-        }
-    };
-
-    // ✅ Handle User Signup
     const handleSignup = async (e) => {
         e.preventDefault();
         setSignupMessage("");
@@ -43,20 +28,23 @@ function App() {
         }
     };
 
+    const handleCrack = async (e) => {
+        e.preventDefault();
+        setError("");
+        setResult(null);
+
+        try {
+            const response = await axios.post(API_URL, { hash, algorithm, method });
+            setResult(response.data);
+        } catch (error) {
+            setError("Failed to connect to backend.");
+        }
+    };
+
     return (
-        <div style={{ textAlign: "center", padding: "50px", fontFamily: "Arial, sans-serif" }}>
-            <h2>🔐 Hashed Password Cracker</h2>
-
-            {/* ✅ Toggle Between Signup and Cracker */}
-            <button 
-                onClick={() => setShowSignup(!showSignup)} 
-                style={{ padding: "10px 20px", marginBottom: "10px", cursor: "pointer" }}>
-                {showSignup ? "Go to Cracker" : "Go to Signup"}
-            </button>
-
-            {showSignup ? (
-                // ✅ Signup Form
-                <div>
+        <div className="container">
+            {!showCracker ? (
+                <div className="card">
                     <h2>🔑 Signup</h2>
                     <form onSubmit={handleSignup}>
                         <input
@@ -65,64 +53,64 @@ function App() {
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             required
-                            style={{ padding: "10px", width: "250px", marginBottom: "10px" }}
+                            className="input"
                         />
-                        <br />
                         <input
                             type="password"
                             placeholder="Password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
-                            style={{ padding: "10px", width: "250px", marginBottom: "10px" }}
+                            className="input"
                         />
-                        <br />
-                        <button type="submit" style={{ padding: "10px 20px", cursor: "pointer" }}>Signup</button>
+                        <button type="submit" className="btn">Signup</button>
                     </form>
+                    {signupMessage && <p className="message">{signupMessage}</p>}
 
-                    {signupMessage && <p style={{ color: "green", fontWeight: "bold" }}>{signupMessage}</p>}
+                    <hr className="divider" />
+
+                    <p>or</p>
+                    <button onClick={() => setShowCracker(true)} className="btn btn-secondary">
+                        Skip Signup & Crack Password
+                    </button>
                 </div>
             ) : (
-                // ✅ Password Cracker Form
-                <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
-                    <input
-                        type="text"
-                        placeholder="Enter Hash"
-                        value={hash}
-                        onChange={(e) => setHash(e.target.value)}
-                        required
-                        style={{ padding: "10px", width: "300px", marginBottom: "10px" }}
-                    />
-                    <br />
-                    <select value={algorithm} onChange={(e) => setAlgorithm(e.target.value)}
-                        style={{ padding: "10px", marginRight: "10px" }}>
-                        <option value="md5">MD5</option>
-                        <option value="sha1">SHA-1</option>
-                        <option value="sha256">SHA-256</option>
-                        <option value="sha512">SHA-512</option>
-                    </select>
-                    <select value={method} onChange={(e) => setMethod(e.target.value)}
-                        style={{ padding: "10px" }}>
-                        <option value="brute-force">Brute Force</option>
-                        <option value="dictionary">Dictionary Attack</option>
-                        <option value="rainbow-table">Rainbow Table Attack</option>
-                    </select>
-                    <br /><br />
-                    <button type="submit" style={{ padding: "10px 20px", cursor: "pointer" }}>Crack Password</button>
-                </form>
-            )}
+                <div className="card">
+                    <h2>🔐 Hashed Password Cracker</h2>
+                    <form onSubmit={handleCrack}>
+                        <input
+                            type="text"
+                            placeholder="Enter Hash"
+                            value={hash}
+                            onChange={(e) => setHash(e.target.value)}
+                            required
+                            className="input"
+                        />
+                        <select value={algorithm} onChange={(e) => setAlgorithm(e.target.value)} className="select">
+                            <option value="md5">MD5</option>
+                            <option value="sha1">SHA-1</option>
+                            <option value="sha256">SHA-256</option>
+                            <option value="sha512">SHA-512</option>
+                        </select>
+                        <select value={method} onChange={(e) => setMethod(e.target.value)} className="select">
+                            <option value="brute-force">Brute Force</option>
+                            <option value="dictionary">Dictionary Attack</option>
+                            <option value="rainbow-table">Rainbow Table Attack</option>
+                        </select>
+                        <button type="submit" className="btn">Crack Password</button>
+                    </form>
 
-            {/* ✅ Error Message */}
-            {error && <p style={{ color: "red", fontWeight: "bold" }}>{error}</p>}
+                    {error && <p className="error">{error}</p>}
 
-            {/* ✅ Password Cracking Result */}
-            {result && !showSignup && (
-                <div style={{ marginTop: "20px", padding: "10px", border: "1px solid gray", display: "inline-block" }}>
-                    <h3>Result:</h3>
-                    {result.success ? (
-                        <p style={{ color: "green", fontWeight: "bold" }}>Cracked Password: {result.password}</p>
-                    ) : (
-                        <p style={{ color: "red", fontWeight: "bold" }}>Password not found</p>
+                    {result && (
+                        <div className="result-box">
+                            <h3>Result:</h3>
+                            {result.success ? (
+                                <p className="success">Cracked Password: {result.password}</p>
+                            ) : (
+                                <p className="error">Password not found</p>
+                            )}
+                        </div>
                     )}
                 </div>
             )}
