@@ -8,7 +8,7 @@ function App() {
     const [result, setResult] = useState(null);
     const [error, setError] = useState("");
 
-    // ✅ Correct Backend API URL
+    // ✅ Backend API URL (Update if needed)
     const API_URL = "https://hashed-password-cracker-backend.onrender.com/crack";
 
     const handleSubmit = async (e) => {
@@ -51,11 +51,13 @@ function App() {
                     <option value="md5">MD5</option>
                     <option value="sha1">SHA-1</option>
                     <option value="sha256">SHA-256</option>
+                    <option value="sha512">SHA-512</option> {/* ✅ Added SHA-512 support */}
                 </select>
                 <select value={method} onChange={(e) => setMethod(e.target.value)}
                     style={{ padding: "10px" }}>
                     <option value="brute-force">Brute Force</option>
                     <option value="dictionary">Dictionary Attack</option>
+                    <option value="rainbow-table">Rainbow Table Attack</option> {/* ✅ Added Rainbow Table Attack */}
                 </select>
                 <br /><br />
                 <button type="submit" style={{ padding: "10px 20px", cursor: "pointer" }}>Crack Password</button>
