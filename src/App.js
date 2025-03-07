@@ -7,7 +7,7 @@ function App() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [signupMessage, setSignupMessage] = useState("");
-    const [signupSuccess, setSignupSuccess] = useState(false); // ✅ NEW: To prevent auto-redirection
+    const [signupSuccess, setSignupSuccess] = useState(false);
     const [hash, setHash] = useState("");
     const [algorithm, setAlgorithm] = useState("md5");
     const [method, setMethod] = useState("brute-force");
@@ -24,7 +24,7 @@ function App() {
         try {
             const response = await axios.post(SIGNUP_URL, { username, password });
             setSignupMessage(response.data.message);
-            setSignupSuccess(true); // ✅ NEW: Show options instead of auto-redirecting
+            setSignupSuccess(true);
         } catch (error) {
             setSignupMessage(error.response?.data?.error || "Signup failed");
             setSignupSuccess(false);
@@ -71,10 +71,8 @@ function App() {
 
                     {signupMessage && <p className="message">{signupMessage}</p>}
 
-                    {/* ✅ NEW: Show options after successful signup */}
                     {signupSuccess && (
                         <div>
-                            
                             <button onClick={() => setShowCracker(true)} className="btn">
                                 Go to Crack Password
                             </button>
@@ -104,7 +102,6 @@ function App() {
                             <option value="md5">MD5</option>
                             <option value="sha1">SHA-1</option>
                             <option value="sha256">SHA-256</option>
-                            <option value="sha512">SHA-512</option>
                         </select>
                         <select value={method} onChange={(e) => setMethod(e.target.value)} className="select">
                             <option value="brute-force">Brute Force</option>
@@ -129,7 +126,6 @@ function App() {
 
                     <hr className="divider" />
 
-                    {/* ✅ Back to Signup Button */}
                     <button onClick={() => setShowCracker(false)} className="btn btn-secondary">
                         Back to Signup
                     </button>
