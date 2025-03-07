@@ -13,6 +13,7 @@ function App() {
     const [method, setMethod] = useState("brute-force");
     const [result, setResult] = useState(null);
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false); // ✅ New State for Loading
 
     const API_URL = "https://hashed-password-cracker-backend.onrender.com/crack";
     const SIGNUP_URL = "https://hashed-password-cracker-backend.onrender.com/signup";
@@ -35,12 +36,15 @@ function App() {
         e.preventDefault();
         setError("");
         setResult(null);
+        setLoading(true); // ✅ Show Loading Indicator
 
         try {
             const response = await axios.post(API_URL, { hash, algorithm, method });
             setResult(response.data);
         } catch (error) {
             setError("Failed to connect to backend.");
+        } finally {
+            setLoading(false); // ✅ Hide Loading Indicator after response
         }
     };
 
@@ -111,9 +115,16 @@ function App() {
                         <button type="submit" className="btn">Crack Password</button>
                     </form>
 
+                    {loading && (
+                        <div className="loading">
+                            <div className="spinner"></div>
+                            <p>Cracking in progress... Please wait ⏳</p>
+                        </div>
+                    )}
+
                     {error && <p className="error">{error}</p>}
 
-                    {result && (
+                    {result && !loading && (
                         <div className="result-box">
                             <h3>Result:</h3>
                             {result.success ? (
