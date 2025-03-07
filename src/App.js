@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "./styles.css"; // ✅ Import CSS for styling
+import "./styles.css"; // Import CSS for styling
 
 function App() {
     const [showCracker, setShowCracker] = useState(false);
@@ -13,11 +13,12 @@ function App() {
     const [method, setMethod] = useState("brute-force");
     const [result, setResult] = useState(null);
     const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false); // ✅ New State for Loading
+    const [loading, setLoading] = useState(false);
 
     const API_URL = "https://hashed-password-cracker-backend.onrender.com/crack";
     const SIGNUP_URL = "https://hashed-password-cracker-backend.onrender.com/signup";
 
+    // Handle Signup
     const handleSignup = async (e) => {
         e.preventDefault();
         setSignupMessage("");
@@ -32,11 +33,12 @@ function App() {
         }
     };
 
+    // Handle Crack
     const handleCrack = async (e) => {
         e.preventDefault();
         setError("");
         setResult(null);
-        setLoading(true); // ✅ Show Loading Indicator
+        setLoading(true);
 
         try {
             const response = await axios.post(API_URL, { hash, algorithm, method });
@@ -44,8 +46,17 @@ function App() {
         } catch (error) {
             setError("Failed to connect to backend.");
         } finally {
-            setLoading(false); // ✅ Hide Loading Indicator after response
+            setLoading(false);
         }
+    };
+
+    // Handle Reset
+    const handleReset = () => {
+        setHash("");
+        setAlgorithm("md5");
+        setMethod("brute-force");
+        setResult(null);
+        setError("");
     };
 
     return (
@@ -113,6 +124,7 @@ function App() {
                             <option value="rainbow-table">Rainbow Table Attack</option>
                         </select>
                         <button type="submit" className="btn">Crack Password</button>
+                        <button type="button" onClick={handleReset} className="btn btn-reset">Reset</button>
                     </form>
 
                     {loading && (
