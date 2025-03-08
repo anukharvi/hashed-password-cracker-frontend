@@ -4,10 +4,11 @@ import "./styles.css"; // Import CSS for styling
 
 function App() {
     const [showCracker, setShowCracker] = useState(false);
+    const [isLogin, setIsLogin] = useState(false); // ✅ Toggle between Signup/Login
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [signupMessage, setSignupMessage] = useState("");
-    const [signupSuccess, setSignupSuccess] = useState(false);
+    const [authMessage, setAuthMessage] = useState("");
+    const [authSuccess, setAuthSuccess] = useState(false);
     const [hash, setHash] = useState("");
     const [algorithm, setAlgorithm] = useState("md5");
     const [method, setMethod] = useState("brute-force");
@@ -15,25 +16,29 @@ function App() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
+    // ✅ API URLs
     const API_URL = "https://hashed-password-cracker-backend.onrender.com/crack";
     const SIGNUP_URL = "https://hashed-password-cracker-backend.onrender.com/signup";
+    const LOGIN_URL = "https://hashed-password-cracker-backend.onrender.com/login";
 
-    // Handle Signup
-    const handleSignup = async (e) => {
+    // ✅ Handle Signup/Login
+    const handleAuth = async (e) => {
         e.preventDefault();
-        setSignupMessage("");
+        setAuthMessage("");
+
+        const url = isLogin ? LOGIN_URL : SIGNUP_URL;
 
         try {
-            const response = await axios.post(SIGNUP_URL, { username, password });
-            setSignupMessage(response.data.message);
-            setSignupSuccess(true);
+            const response = await axios.post(url, { username, password });
+            setAuthMessage(response.data.message);
+            setAuthSuccess(true);
         } catch (error) {
-            setSignupMessage(error.response?.data?.error || "Signup failed");
-            setSignupSuccess(false);
+            setAuthMessage(error.response?.data?.error || (isLogin ? "Login failed" : "Signup failed"));
+            setAuthSuccess(false);
         }
     };
 
-    // Handle Crack
+    // ✅ Handle Crack Password
     const handleCrack = async (e) => {
         e.preventDefault();
         setError("");
@@ -50,7 +55,7 @@ function App() {
         }
     };
 
-    // Handle Reset
+    // ✅ Handle Reset
     const handleReset = () => {
         setHash("");
         setAlgorithm("md5");
@@ -63,8 +68,8 @@ function App() {
         <div className="container">
             {!showCracker ? (
                 <div className="card">
-                    <h2>🔑 Signup</h2>
-                    <form onSubmit={handleSignup}>
+                    <h2>{isLogin ? "🔓 Login" : "🔑 Signup"}</h2>
+                    <form onSubmit={handleAuth}>
                         <input
                             type="text"
                             placeholder="Username"
@@ -81,12 +86,12 @@ function App() {
                             required
                             className="input"
                         />
-                        <button type="submit" className="btn">Signup</button>
+                        <button type="submit" className="btn">{isLogin ? "Login" : "Signup"}</button>
                     </form>
 
-                    {signupMessage && <p className="message">{signupMessage}</p>}
+                    {authMessage && <p className={`message ${authSuccess ? "success" : "error"}`}>{authMessage}</p>}
 
-                    {signupSuccess && (
+                    {authSuccess && (
                         <div>
                             <button onClick={() => setShowCracker(true)} className="btn">
                                 Go to Crack Password
@@ -95,10 +100,15 @@ function App() {
                     )}
 
                     <hr className="divider" />
+                    <p>
+                        {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+                        <button className="btn-link" onClick={() => setIsLogin(!isLogin)}>
+                            {isLogin ? "Signup" : "Login"}
+                        </button>
+                    </p>
 
-                    <p>or</p>
                     <button onClick={() => setShowCracker(true)} className="btn btn-secondary">
-                        Skip Signup & Crack Password
+                        Skip & Crack Password
                     </button>
                 </div>
             ) : (
@@ -148,9 +158,8 @@ function App() {
                     )}
 
                     <hr className="divider" />
-
                     <button onClick={() => setShowCracker(false)} className="btn btn-secondary">
-                        Back to Signup
+                        Back to Signup/Login
                     </button>
                 </div>
             )}
